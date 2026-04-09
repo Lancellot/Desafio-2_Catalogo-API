@@ -12,6 +12,7 @@ export default function App() {
         <header>
           <Navbar />
         </header>
+        
         <main className="bg-gray-100 min-h-screen flex-1 flex flex-col">
           <Routes>
             <Route path="/" element={<Home />} />

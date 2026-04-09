@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
-import {
-    getProducts,
-    getCategories,
-    getByCategory,
-} from "../../services/Service";
+import { getProducts, getCategories, getByCategory } from "../../services/Service";
 import type { Product } from "../../models/Product";
+import type { Category } from "../../services/Service";
 import ProductCard from "../../components/product/cardproduct/ProductCard";
 import FilterSidebar from "../../components/filters/FilterSidebar";
-import type { Category } from "../../models/Category";
-
-const [categories, setCategories] = useState<Category[]>([]);
 
 export default function Home() {
     const [products, setProducts] = useState<Product[]>([]);
     const [allProducts, setAllProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<string[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState("");
-
-    const [loading, setLoading] = useState(true);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [loadingCategories, setLoadingCategories] = useState(true);
     const [error, setError] = useState(false);
 
     useEffect(() => {
@@ -27,24 +21,22 @@ export default function Home() {
                     getProducts(),
                     getCategories(),
                 ]);
-
                 setProducts(productsData);
                 setAllProducts(productsData);
                 setCategories(categoriesData);
             } catch {
                 setError(true);
             } finally {
-                setLoading(false);
+                setLoadingProducts(false);
+                setLoadingCategories(false);
             }
         }
-
         fetchData();
     }, []);
 
     async function handleFilter(category: string) {
         setSelectedCategory(category);
-        setLoading(true);
-
+        setLoadingProducts(true);
         try {
             if (category === "") {
                 setProducts(allProducts);
@@ -53,7 +45,7 @@ export default function Home() {
                 setProducts(data);
             }
         } finally {
-            setLoading(false);
+            setLoadingProducts(false);
         }
     }
 
@@ -64,26 +56,34 @@ export default function Home() {
         setProducts(filtered);
     }
 
-    if (loading) return <p className="text-center mt-10">Carregando...</p>;
     if (error) return <p className="text-center mt-10">Erro ao carregar</p>;
 
     return (
-        <div className="max-w-7xl mx-auto p-4">
-            <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-row min-h-screen">
+            <aside className="w-64 shrink-0 sticky top-0 h-screen overflow-y-auto bg-white shadow-md">
+                {loadingCategories ? (
+                    <p className="p-4 text-sm text-gray-400">Carregando filtros...</p>
+                ) : (
+                    <FilterSidebar
+                        categories={categories}
+                        selectedCategory={selectedCategory}
+                        onFilter={handleFilter}
+                        onSearch={handleSearch}
+                    />
+                )}
+            </aside>
 
-                <FilterSidebar
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                    onFilter={handleFilter}
-                    onSearch={handleSearch}
-                />
-
-                <div className="flex-1 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
-            </div>
+            <main className="flex-1 p-6">
+                {loadingProducts ? (
+                    <p className="text-center mt-10">Carregando produtos...</p>
+                ) : (
+                    <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                        {products.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                )}
+            </main>
         </div>
     );
 }
