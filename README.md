@@ -141,7 +141,8 @@ npm run build
 
 ## 📸 Screenshots
 
-![alt text](image.png)
+
+https://github.com/user-attachments/assets/d3fe0d9f-8e1f-4660-b82d-61c131e45fa3
 
 
 
