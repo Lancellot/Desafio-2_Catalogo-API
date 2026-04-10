@@ -1,155 +1,137 @@
-P# Desafio 2 — Catálogo com API
+# 🛍️ Desafio 2 — Catálogo de Produtos
 
-## Visão geral
-
-Neste desafio você irá construir uma **aplicação responsiva que consome uma API externa** e exibe um catálogo de produtos.
-
-O objetivo é aprender a:
-
-* consumir APIs
-* renderizar dados dinamicamente
-* manipular dados na interface
-* manter uma interface responsiva
-
-Utilizaremos a **Fake Store API**, que fornece um conjunto de produtos fictícios para testes.
-
-[https://fakestoreapi.com/](https://fakestoreapi.com/)
+Aplicação responsiva de catálogo de produtos desenvolvida com React, Vite, TypeScript e Tailwind CSS, consumindo dados de uma API externa.
 
 ---
 
-# Referência visual
+## 🚀 Tecnologias utilizadas
 
-A interface deve se parecer com um **catálogo de produtos moderno**, semelhante a aplicações reais.
-
-![exemplo](./examples/example.png)
-
-Exemplo de estrutura comum:
-
-* lista de produtos em **grid/flex**
-* **sidebar ou barra de filtros**
-* **cards de produto**
-
-O layout pode usar:
-
-* sidebar com categorias + grid de produtos
-* filtros no topo + grid de produtos
-
-Não é necessário copiar exatamente a solução de referência.
+<div>
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white" />
+</div>
 
 ---
 
-# Stack obrigatória
+## 🌐 API
 
-A implementação deve utilizar:
+A aplicação consome a **[DummyJSON](https://dummyjson.com/)** — uma alternativa robusta e confiável à Fake Store API (originalmente proposta no enunciado).
 
-* **React**
-* **Vite**
-* **TypeScript**
-* **Tailwind CSS**
+> ⚠️ **Por que DummyJSON?**  
+> A Fake Store API (`fakestoreapi.com`) apresentou instabilidade durante o desenvolvimento, retornando erros ou sem resposta em diversas requisições. Para garantir a funcionalidade e estabilidade da aplicação, optou-se pela DummyJSON, que oferece endpoints equivalentes e compatíveis com os requisitos do desafio.
 
-Este repositório fornece um projeto inicial com **React + Vite + TypeScript + TailwindCSS**.
+### Endpoints utilizados
 
-# API utilizada
+| Descrição | Endpoint |
+|---|---|
+| Lista de produtos | `GET /products` |
+| Lista de categorias | `GET /products/categories` |
+| Produtos por categoria | `GET /products/category/:slug` |
 
-Utilize a **Fake Store API**.
+---
 
-Produtos:
-
-```
-https://fakestoreapi.com/products
-```
-
-Categorias:
+## 📁 Estrutura do projeto
 
 ```
-https://fakestoreapi.com/products/categories
-```
-
-Apenas eletrônicos
-
-```
-https://fakestoreapi.com/products/category/electronics
+src/
+├── assets/              # Imagens e recursos estáticos
+├── components/
+│   ├── filters/
+│   │   └── FilterSidebar.tsx    # Sidebar de filtro por categoria
+│   ├── footer/
+│   │   └── Footer.tsx
+│   ├── navbar/
+│   │   └── Navbar.tsx
+│   └── product/
+│       └── cardproduct/
+│           └── ProductCard.tsx  # Card individual de produto
+├── models/
+│   ├── Category.ts      # Tipagem de categoria
+│   └── Product.ts       # Tipagem de produto
+├── pages/
+│   └── home/
+│       └── Home.tsx     # Página principal com o catálogo
+├── services/
+│   └── Service.ts       # Camada de acesso à API (Axios)
+├── App.tsx
+├── main.tsx
+└── index.css
 ```
 
 ---
 
-# Objetivo
+## ⚙️ Camada de serviço (API)
 
-Construir uma aplicação responsiva que:
+A comunicação com a API é centralizada em `src/services/Service.ts`, utilizando uma instância do **Axios** configurada com a base URL da DummyJSON:
 
-* consuma dados da API
-* exiba produtos em um catálogo
-* permita alguma **interação dinâmica com os dados**
+```ts
+import axios from "axios";
+import type { Product } from "../models/Product";
 
----
+const api = axios.create({
+  baseURL: "https://dummyjson.com",
+});
 
-# Requisitos obrigatórios
+// Retorna todos os produtos
+export async function getProducts(): Promise<Product[]> { ... }
 
-Para aprovação no desafio:
+// Retorna todas as categorias disponíveis
+export async function getCategories(): Promise<Category[]> { ... }
 
-* consumir dados da Fake Store API
-* exibir produtos dinamicamente
-* cada produto deve mostrar pelo menos:
+// Retorna produtos filtrados por categoria
+export async function getByCategory(category: string): Promise<Product[]> { ... }
+```
 
-  * imagem
-  * título
-  * preço
-
-* ter **componentização mínima**
-* interface **responsiva**
-* realizar **deploy da aplicação**
-
-Além disso, a aplicação deve possuir **pelo menos um comportamento dinâmico**, como por exemplo:
-
-* filtro por categoria
-* ordenação por preço
-* busca de produtos
+Essa separação mantém a lógica de dados isolada dos componentes de UI, facilitando manutenção e testes.
 
 ---
 
-# Melhorias opcionais
+## ✅ Requisitos implementados
 
-Os itens abaixo não são obrigatórios, mas aumentam a qualidade da solução:
+### Obrigatórios
+- [x] Consumo de dados da API externa
+- [x] Exibição dinâmica de produtos
+- [x] Cada produto exibe imagem, título e preço
+- [x] Componentização (Navbar, Footer, FilterSidebar, ProductCard)
+- [x] Interface responsiva (mobile e desktop)
+- [x] Filtro por categoria (comportamento dinâmico)
 
-* separação entre UI e lógica de dados
-* melhor organização de componentes
-* melhor tipagem TypeScript
-* melhor hierarquia visual
-* implementar loading state
-* implementar error state
+### Opcionais
+- [x] Separação entre UI e lógica de dados (camada `services/`)
+- [x] Organização de componentes por domínio
+- [x] Tipagem TypeScript com models dedicados
+- [x] Loading state durante requisições
+- [x] Error state para falhas de rede
 
 ---
 
-# Como desenvolver e entregar
+## 🏃 Como rodar localmente
 
-## 1. Faça um fork do repositório
+### Pré-requisitos
 
-Clique em **Fork** no topo desta página e clone o seu fork:
+- Node.js 18+
+- npm ou yarn
+
+### Instalação
 
 ```bash
-git clone https://github.com/seu-usuario/nome-do-repo.git
+# Clone o repositório
+git clone https://github.com/lancellot/Desafio-2_Catalogo-API
 cd nome-do-repo
-```
 
----
-
-## 2. Instale as dependências
-
-```bash
+# Instale as dependências
 npm install
-```
 
----
-
-## 3. Desenvolva a aplicação
-
-Durante o desenvolvimento:
-
-```bash
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-Antes de enviar:
+A aplicação estará disponível em `http://localhost:5173`.
+
+### Build para produção
 
 ```bash
 npm run build
@@ -157,14 +139,14 @@ npm run build
 
 ---
 
-## 4. Envie sua solução
+## 📸 Screenshots
 
-Abra um **Pull Request do seu fork para este repositório**, contendo screenshots do layout em **desktop e mobile**
 
-Após o envio, sua solução será revisada. Feedback poderá ser fornecido antes da aprovação.
+https://github.com/user-attachments/assets/d3fe0d9f-8e1f-4660-b82d-61c131e45fa3
 
-## 5. Solução de Referência
-Esse site demonstra um modelo de solução, que implementa todos os requisitos obrigatórios e opcionais do desafio:
 
-https://desafio-2-solution.vercel.app/
 
+## 📝 Observações
+
+- A troca de API (Fake Store → DummyJSON) não impacta os requisitos do desafio. Os dados retornados (produtos, categorias, imagens, preços) são equivalentes e atendem a todos os critérios de avaliação.
+- A estrutura de tipos foi adaptada para o formato de resposta da DummyJSON (ex: `products[]` dentro do objeto de resposta, categorias com `slug` e `name`).
