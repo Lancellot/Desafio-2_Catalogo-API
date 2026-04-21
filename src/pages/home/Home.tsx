@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProducts, getCategories, getByCategory } from "../../services/Service";
 import type { Product } from "../../models/Product";
-import type { Category } from "../../services/Service";
+import type { Category } from "../../models/Category";
 import ProductCard from "../../components/product/cardproduct/ProductCard";
 import FilterSidebar from "../../components/filters/FilterSidebar";
 
