@@ -14,8 +14,15 @@ export default function Home() {
     const [loadingProducts, setLoadingProducts] = useState(true);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [error, setError] = useState(false);
-    
+
+    const [visibleCount, setVisibleCount] = useState(20);
+
     useEffect(() => {
+        setVisibleCount(24);
+    }, [selectedCategory, searchTerm]);
+
+    useEffect(() => {
+
         async function fetchData() {
             try {
                 const [productsData, categoriesData] = await Promise.all([
@@ -60,9 +67,12 @@ export default function Home() {
         return <p className="text-center mt-10">Erro ao carregar</p>;
     }
 
+    const visibleProducts = filteredProducts.slice(0, visibleCount);
+
     return (
+
         <div className="flex flex-row min-h-screen">
-            {/* Sidebar */}
+
             <aside className="w-64 shrink-0 sticky top-0 h-screen overflow-y-auto bg-white shadow-md">
                 {loadingCategories ? (
                     <p className="p-4 text-sm text-gray-400">
@@ -89,12 +99,22 @@ export default function Home() {
                     </p>
                 ) : (
                     <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                        {filteredProducts.map((product) => (
+                        {visibleProducts.map((product) => (
                             <ProductCard
                                 key={product.id}
                                 product={product}
                             />
                         ))}
+                    </div>
+                )}
+                {visibleCount < filteredProducts.length && (
+                    <div className="flex justify-center mt-6">
+                        <button
+                            onClick={() => setVisibleCount((prev) => prev + 24)}
+                            className="px-4 py-2 bg-black text-white rounded-2xl hover:bg-gray-800 transition"
+                        >
+                            Carregar mais
+                        </button>
                     </div>
                 )}
             </main>
