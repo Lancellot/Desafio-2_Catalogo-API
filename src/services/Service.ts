@@ -11,13 +11,19 @@ type ProductsResponse = {
 };
 
 export async function getProducts(): Promise<Product[]> {
-    const { data } = await api.get<ProductsResponse>("/products");
+    const { data } = await api.get<ProductsResponse>(
+        `/products?limit=0`
+    );
     return data.products;
 }
 
 export async function getCategories(): Promise<Pick<Category, "slug" | "name">[]> {
     const { data } = await api.get<Category[]>("/products/categories");
-    return data.map(({ slug, name }) => ({ slug, name }));
+
+    return data.map((cat) => ({
+        slug: cat.slug,
+        name: cat.name
+    }));
 }
 
 export async function getByCategory(category: string): Promise<Product[]> {
